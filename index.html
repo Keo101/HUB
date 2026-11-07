@@ -12,9 +12,13 @@
     .store-shell { max-width: 1280px; margin: 0 auto; }
     .store-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 4px 0 14px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
     .store-header h1 { margin: 0; font-size: 2rem; }
+    .store-header .store-slogan { margin: 5px 0 0; color: #d3d5cb; font-size: 0.78rem; font-weight: bold; letter-spacing: 1px; }
+    .store-header .store-slogan span { color: var(--orange); }
     .store-header p { margin: 0; color: var(--muted); }
     .brand-weed { color: var(--orange); }
     .brand-hub { color: #fff; }
+    .brand-home { display: inline-block; color: inherit; text-decoration: none; }
+    .brand-home:hover h1 { text-decoration: underline; text-decoration-color: var(--orange); }
     .category-landing { padding: 34px 20px 38px; margin-bottom: 22px; text-align: center; border: 1px solid var(--line); background: radial-gradient(ellipse at 50% 0, #283522 0, #151812 54%, #11130f 100%); animation: rise-in 420ms ease-out both; }
     .category-landing h2 { margin: 0 0 8px; font-size: 1.8rem; }
     .category-landing p { margin: 0 0 22px; color: #c4c6bc; }
@@ -38,6 +42,15 @@
     .strain-art[data-type="Sativa"] { background: radial-gradient(ellipse at 60% 35%, #c2803d 0, #596c3c 35%, #182117 82%); }
     .strain-art[data-type="Hybrid"] { background: radial-gradient(ellipse at 45% 30%, #879552 0, #53613b 34%, #1a2117 80%); }
     .strain-label { min-height: 1.4em; margin: 5px 0; color: #d3d5cb; font-size: 0.88rem; font-weight: bold; }
+    .rating-chip { display: inline-block; align-self: flex-start; margin: 2px 0 6px; padding: 4px 8px; border: 1px solid currentColor; border-radius: 3px; font-size: 0.78rem; font-weight: bold; }
+    .rating-f { color: #ff5555; }
+    .rating-d { color: #b38362; }
+    .rating-c { color: #ffe34d; }
+    .rating-b { color: #ff8b38; }
+    .rating-a { color: #71d17c; }
+    .rating-s { color: #55b4ff; }
+    .rating-s-plus { color: #9c76ff; }
+    .rating-s-double-plus { color: #db82ff; }
     .product-description { margin: 6px 0; color: #d6d7ce; font-size: 0.91rem; line-height: 1.4; }
     .intensity { font-weight: bold; }
     .intensity-weak { color: #83d17c; }
@@ -70,6 +83,9 @@
     .cart-total { margin: 0; font-weight: bold; }
     .empty-cart { display: grid; justify-items: start; gap: 10px; color: var(--muted); }
     .return-shop { padding: 9px 12px; border: 0; background: var(--orange); color: #17120e; font-weight: bold; cursor: pointer; }
+    .checkout-button { width: 100%; margin-top: 16px; padding: 12px; border: 0; background: var(--orange); color: #17120e; font-weight: bold; cursor: pointer; }
+    .checkout-button:disabled { background: #55574f; color: #bbb; cursor: not-allowed; }
+    .checkout-message { margin: 10px 0 0; color: #f4c18b; font-size: 0.9rem; }
     .age-gate { min-height: calc(100vh - 48px); display: grid; place-items: center; }
     .age-panel { width: min(440px, 100%); padding: 30px; border: 1px solid var(--line); background: var(--panel); text-align: center; }
     .age-panel h1 { margin-top: 0; }
@@ -118,7 +134,10 @@
 
   <div class="store-shell" id="store" hidden>
     <header class="store-header">
-      <h1><span class="brand-weed">WEED</span> <span class="brand-hub">HUB</span></h1>
+      <a class="brand-home" href="#category-landing" aria-label="WEED HUB home" onclick="goHome(event)">
+        <h1><span class="brand-weed">WEED</span> <span class="brand-hub">HUB</span></h1>
+        <p class="store-slogan">SUPER SIZED <span>ZAZA</span></p>
+      </a>
       <p>Featured flower and current prices</p>
     </header>
 
@@ -155,6 +174,8 @@
     </div>
     <ul class="cart-items" id="full-cart-items"></ul>
     <p class="cart-total">Total: <span id="full-cart-total">R 0.00</span></p>
+    <button class="checkout-button" id="checkout-button" type="button" onclick="checkout()">Checkout</button>
+    <p class="checkout-message" id="checkout-message" role="status" hidden></p>
   </dialog>
 
   <script>
@@ -195,6 +216,26 @@
       { name: 'Chemdawg', price: 50, group: 'Hybrid', type: 'Balanced hybrid', ratio: '50% Indica / 50% Sativa', thc: '17-25', intensity: 'High', time: 'Anytime', setting: 'Indoors', effects: 'Uplifting, focused, relaxed, happy' },
       { name: 'Apple Fritter', price: 50, group: 'Hybrid', type: 'Balanced hybrid', ratio: '50% Indica / 50% Sativa', thc: '22-28', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Relaxed, euphoric, happy, uplifted' }
     ];
+    const strainRatings = {
+      'Bubba Kush': 'A', 'OG Kush': 'S++', 'Mango Haze': 'S', 'Northern Lights': 'S+',
+      'Blue Dream': 'S++', 'Sour Diesel': 'S', 'Girl Scout Cookies': 'S++', 'Granddaddy Purple': 'S+',
+      'White Widow': 'A', 'Jack Herer': 'S++', 'Pineapple Express': 'S', 'Gelato': 'S+',
+      'Wedding Cake': 'S', 'Zkittlez': 'A', 'Gorilla Glue #4': 'S++', 'AK-47': 'A',
+      'Durban Poison': 'S+', 'Green Crack': 'S', 'Amnesia Haze': 'S', 'Super Silver Haze': 'S',
+      'Strawberry Cough': 'A', 'Trainwreck': 'A', 'Purple Haze': 'B', 'Afghan Kush': 'A',
+      'Hindu Kush': 'B', 'Bruce Banner': 'S+', 'Runtz': 'S++', 'Do-Si-Dos': 'S',
+      'Skywalker OG': 'S', 'Banana Kush': 'A', 'Maui Wowie': 'B', 'Lemon Haze': 'A',
+      'Chemdawg': 'A', 'Apple Fritter': 'S'
+    };
+    const ratingPrices = { F: 35, D: 40, C: 45, B: 50, A: 60, S: 75, 'S+': 95 };
+    const sPlusPlusPrices = {
+      'Girl Scout Cookies': 200, 'OG Kush': 180, 'Blue Dream': 165,
+      'Jack Herer': 150, 'Gorilla Glue #4': 135, Runtz: 120
+    };
+    for (const flower of flowerCatalog) {
+      flower.rating = strainRatings[flower.name];
+      flower.price = flower.rating === 'S++' ? sPlusPlusPrices[flower.name] : ratingPrices[flower.rating];
+    }
 
     function enterStore() {
       document.getElementById('age-prompt').hidden = true;
@@ -259,8 +300,21 @@
       for (const [index, flower] of flowerCatalog.entries()) {
         grid.append(createProductCard(flower, index));
       }
-      content.append(heading, description, note, grid);
+      const anytimeNote = document.createElement('p');
+      anytimeNote.className = 'catalog-note';
+      anytimeNote.textContent = 'Ratings are subjective; effects, THC, and strain characteristics can vary between batches.';
+      content.append(heading, description, note, grid, anytimeNote);
       document.getElementById('products-heading').scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+
+    function goHome(event) {
+      event.preventDefault();
+      document.getElementById('shop-layout').hidden = true;
+      document.getElementById('category-landing').hidden = false;
+      for (const button of document.querySelectorAll('.category-option')) {
+        button.removeAttribute('aria-current');
+      }
+      document.getElementById('category-landing').scrollIntoView({ block: 'start', behavior: 'smooth' });
     }
 
     function createProductCard(flower, index) {
@@ -283,13 +337,22 @@
       const type = document.createElement('p');
       type.className = 'strain-label';
       type.textContent = flower.ratio ? `${flower.type} - ${flower.ratio}` : flower.type;
+      const ratingClass = {
+        F: 'rating-f', D: 'rating-d', C: 'rating-c', B: 'rating-b', A: 'rating-a',
+        S: 'rating-s', 'S+': 'rating-s-plus', 'S++': 'rating-s-double-plus'
+      }[flower.rating];
+      const rating = document.createElement('span');
+      rating.className = `rating-chip ${ratingClass}`;
+      rating.textContent = `USER EXPERIENCE: ${flower.rating}`;
       const details = document.createElement('p');
       details.className = 'product-description';
       const intensityClass = `intensity-${flower.intensity.toLowerCase()}`;
       details.innerHTML = `THC: ${flower.thc}%<br>INTENSITY: <span class="intensity ${intensityClass}">${flower.intensity.toUpperCase()}</span>`;
       const useTime = document.createElement('p');
-      useTime.className = `use-time ${flower.time === 'Daytime' ? 'day-use' : 'night-use'}`;
-      useTime.textContent = `${flower.time === 'Daytime' ? '☀️' : '🌙'} ${flower.time.toUpperCase()} USE`;
+      const isDaytime = flower.time === 'Daytime';
+      const isAnytime = flower.time === 'Anytime';
+      useTime.className = `use-time ${isDaytime ? 'day-use' : 'night-use'}`;
+      useTime.textContent = `${isDaytime ? '☀️' : isAnytime ? '👍' : '🌙'} ${flower.time.toUpperCase()} USE`;
       const setting = document.createElement('p');
       setting.className = 'product-description';
       setting.textContent = `Suggested setting: ${flower.setting.toLowerCase()}.`;
@@ -306,7 +369,7 @@
       button.type = 'button';
       button.textContent = 'Add to Cart';
       button.addEventListener('click', () => addToCart(flower.name, flower.price));
-      card.append(artwork, name, price, type, details, useTime, setting, effects, button);
+      card.append(artwork, name, price, type, rating, details, useTime, setting, effects, button);
       return card;
     }
 
@@ -340,6 +403,8 @@
       document.getElementById('cart-count').textContent = String(itemCount);
       document.getElementById('cart-dock-total').textContent = `R ${total.toFixed(2)}`;
       document.getElementById('full-cart-total').textContent = `R ${total.toFixed(2)}`;
+      document.getElementById('checkout-button').disabled = cart.size === 0;
+      document.getElementById('checkout-message').hidden = true;
 
       const cartList = document.getElementById('full-cart-items');
       cartList.replaceChildren();
@@ -388,6 +453,14 @@
     function returnToShop() {
       closeCart();
       selectCategory('flowers');
+    }
+
+    function checkout() {
+      const message = document.getElementById('checkout-message');
+      message.textContent = cart.size === 0
+        ? 'Add an item before checkout.'
+        : 'Checkout is a demo only. No payment has been processed.';
+      message.hidden = false;
     }
   </script>
 
