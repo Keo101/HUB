@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WEED HUB</title>
+  <style>
+    :root { color-scheme: dark; --ink: #f5f2eb; --muted: #aaa99f; --panel: #151712; --line: #393c33; --orange: #ff762e; --green: #83b77a; }
+    * { box-sizing: border-box; }
+    body { font-family: "Trebuchet MS", sans-serif; background: #090a08; color: var(--ink); margin: 0; padding: 24px; }
+    [hidden] { display: none !important; }
+    .store-shell { max-width: 1280px; margin: 0 auto; }
+    .store-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 4px 0 14px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+    .store-header h1 { margin: 0; font-size: 2rem; }
+    .store-header p { margin: 0; color: var(--muted); }
+    .brand-weed { color: var(--orange); }
+    .brand-hub { color: #fff; }
+    .category-landing { padding: 34px 20px 38px; margin-bottom: 22px; text-align: center; border: 1px solid var(--line); background: radial-gradient(ellipse at 50% 0, #283522 0, #151812 54%, #11130f 100%); animation: rise-in 420ms ease-out both; }
+    .category-landing h2 { margin: 0 0 8px; font-size: 1.8rem; }
+    .category-landing p { margin: 0 0 22px; color: #c4c6bc; }
+    .category-choices { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+    .category-button, .welcome-button, .btn { border: 0; background: var(--orange); color: #17120e; font-weight: bold; cursor: pointer; transition: background 160ms ease, transform 160ms ease; }
+    .category-button { min-width: 160px; padding: 13px 20px; }
+    .category-button:hover, .welcome-button:hover, .btn:hover { background: #ff9a61; transform: translateY(-2px); }
+    .shop-layout { display: grid; grid-template-columns: 190px minmax(0, 1fr); gap: 20px; align-items: start; animation: rise-in 360ms ease-out both; }
+    .category-sidebar { position: sticky; top: 16px; display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line); background: var(--panel); }
+    .category-sidebar h2 { margin: 2px 6px 8px; font-size: 1rem; color: var(--muted); }
+    .category-option { width: 100%; padding: 12px; border: 1px solid transparent; background: transparent; color: var(--ink); text-align: left; cursor: pointer; }
+    .category-option:hover, .category-option[aria-current="page"] { border-color: var(--orange); background: #24221b; }
+    .category-content h2 { margin: 0 0 6px; }
+    .category-description { margin: 0 0 16px; color: var(--muted); }
+    .catalog-note { margin: 0 0 14px; color: #aeb5a6; font-size: 0.88rem; }
+    .product-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+    .product-card { display: flex; flex-direction: column; min-width: 0; padding: 12px; border: 1px solid var(--orange); border-radius: 6px; background: linear-gradient(160deg, #1a1d17, #11130f 66%); animation: rise-in 320ms ease-out both; }
+    .product-card h3 { margin: 9px 0 5px; }
+    .product-price { margin: 4px 0 8px; font-size: 1.05rem; font-weight: bold; }
+    .strain-art { display: grid; place-items: center; height: 112px; border: 1px solid #46513a; border-radius: 4px; color: #e8efd9; font-size: 1.05rem; font-weight: bold; text-align: center; text-shadow: 0 1px 5px #000; background: radial-gradient(ellipse at 45% 35%, #82945b 0, #35472b 38%, #151a13 83%); }
+    .strain-art[data-type="Sativa"] { background: radial-gradient(ellipse at 60% 35%, #c2803d 0, #596c3c 35%, #182117 82%); }
+    .strain-art[data-type="Hybrid"] { background: radial-gradient(ellipse at 45% 30%, #879552 0, #53613b 34%, #1a2117 80%); }
+    .strain-label { min-height: 1.4em; margin: 5px 0; color: #d3d5cb; font-size: 0.88rem; font-weight: bold; }
+    .product-description { margin: 6px 0; color: #d6d7ce; font-size: 0.91rem; line-height: 1.4; }
+    .intensity { font-weight: bold; }
+    .intensity-weak { color: #83d17c; }
+    .intensity-medium { color: #ffe34d; }
+    .intensity-high { color: #ff6262; }
+    .intensity-perfect { color: #ff9a4d; }
+    .use-time { margin: 8px 0 3px; font-size: 0.86rem; font-weight: bold; }
+    .night-use { color: #c58aff; }
+    .day-use { color: #ffe34d; }
+    .effects { margin: 7px 0 12px; color: #d9dacf; font-size: 0.88rem; line-height: 1.4; }
+    .effects strong { color: #fff; }
+    .btn { width: 100%; margin-top: auto; padding: 11px; border-radius: 3px; }
+    .coming-soon { min-height: 260px; display: grid; place-content: center; padding: 24px; border: 1px solid var(--line); background: radial-gradient(ellipse at center, #273322 0, #151812 70%); text-align: center; animation: rise-in 360ms ease-out both; }
+    .coming-soon h3 { margin: 0 0 8px; font-size: 1.5rem; }
+    .coming-soon p { margin: 0; color: var(--muted); }
+    .cart-dock { position: fixed; z-index: 5; left: 18px; bottom: 18px; width: min(320px, calc(100vw - 36px)); padding: 12px 14px; border: 1px solid var(--orange); border-radius: 5px; background: #171913; box-shadow: 0 8px 28px #0009; }
+    .cart-dock-top { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 6px; }
+    .cart-dock-total { color: #f4c18b; font-weight: bold; }
+    .cart-open { width: 100%; padding: 9px; border: 1px solid #63503c; background: #27231d; color: #fff; cursor: pointer; }
+    .cart-open:hover { border-color: var(--orange); }
+    .cart-dialog { width: min(620px, calc(100% - 36px)); max-height: 80vh; overflow: auto; padding: 22px; border: 1px solid #626458; background: #11130f; color: #fff; }
+    .cart-dialog::backdrop { background: #000c; }
+    .dialog-header { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 18px; }
+    .dialog-header h2 { margin: 0; }
+    .cart-items { display: grid; gap: 10px; margin: 0 0 14px; padding: 0; list-style: none; }
+    .cart-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+    .quantity-controls { display: inline-flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .quantity-button { width: 34px; height: 34px; border: 1px solid #61645a; background: #20231d; color: #fff; font-size: 1.2rem; cursor: pointer; }
+    .quantity-button:hover { border-color: var(--orange); color: #ff9a61; }
+    .cart-total { margin: 0; font-weight: bold; }
+    .empty-cart { display: grid; justify-items: start; gap: 10px; color: var(--muted); }
+    .return-shop { padding: 9px 12px; border: 0; background: var(--orange); color: #17120e; font-weight: bold; cursor: pointer; }
+    .age-gate { min-height: calc(100vh - 48px); display: grid; place-items: center; }
+    .age-panel { width: min(440px, 100%); padding: 30px; border: 1px solid var(--line); background: var(--panel); text-align: center; }
+    .age-panel h1 { margin-top: 0; }
+    .age-actions { display: flex; justify-content: center; gap: 12px; margin-top: 24px; }
+    .age-actions button { min-width: 120px; padding: 12px; border: 1px solid var(--orange); background: var(--orange); color: #111; font-weight: bold; cursor: pointer; }
+    .age-actions button:last-child { background: transparent; color: #fff; border-color: #666; }
+    .welcome-button { margin-top: 12px; padding: 13px 20px; }
+    @keyframes rise-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    @media (max-width: 980px) { .product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 680px) {
+      body { padding: 16px; }
+      .store-header { align-items: flex-start; flex-direction: column; }
+      .store-header p { font-size: 0.95rem; }
+      .shop-layout { grid-template-columns: 1fr; }
+      .category-sidebar { position: static; grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .category-sidebar h2 { grid-column: 1 / -1; }
+      .category-option { padding: 10px 6px; text-align: center; }
+      .product-grid { grid-template-columns: 1fr; }
+      .category-actions { display: grid; grid-template-columns: 1fr; }
+      .age-actions { flex-direction: column; }
+      .age-actions button { width: 100%; }
+      .cart-dock { left: 10px; bottom: 10px; width: min(300px, calc(100vw - 20px)); }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; } }
+  </style>
+</head>
+<body>
+
+  <main class="age-gate" id="age-gate" role="dialog" aria-modal="true" aria-labelledby="age-title">
+    <section class="age-panel">
+      <div id="age-prompt">
+        <h1 id="age-title">Age Check</h1>
+        <p>Are you older than 18?</p>
+        <div class="age-actions">
+          <button type="button" onclick="enterStore()">Yes, I'm over 18</button>
+          <button type="button" onclick="denyEntry()">No</button>
+        </div>
+      </div>
+      <div id="welcome-panel" hidden>
+        <h1>Welcome to <span class="brand-weed">WEED</span> <span class="brand-hub">HUB</span></h1>
+        <button class="welcome-button" type="button" onclick="viewProducts()">View available products</button>
+      </div>
+      <p id="age-denied" role="status" hidden>Please leave this site. You must be over 18 to enter.</p>
+    </section>
+  </main>
+
+  <div class="store-shell" id="store" hidden>
+    <header class="store-header">
+      <h1><span class="brand-weed">WEED</span> <span class="brand-hub">HUB</span></h1>
+      <p>Featured flower and current prices</p>
+    </header>
+
+    <section class="category-landing" id="category-landing">
+      <h2>Check out the best flowers</h2>
+      <p>Browse flowers now. Pre-rolls and edibles are coming soon.</p>
+      <div class="category-choices">
+        <button class="category-button" type="button" onclick="selectCategory('flowers')">Flowers</button>
+        <button class="category-button" type="button" onclick="selectCategory('pre-rolls')">Pre-rolls</button>
+        <button class="category-button" type="button" onclick="selectCategory('edibles')">Edibles</button>
+      </div>
+    </section>
+
+    <div class="shop-layout" id="shop-layout" hidden>
+      <aside class="category-sidebar" aria-label="Product categories">
+        <h2>Categories</h2>
+        <button class="category-option" type="button" data-category="flowers" onclick="selectCategory('flowers')">Flowers</button>
+        <button class="category-option" type="button" data-category="pre-rolls" onclick="selectCategory('pre-rolls')">Pre-rolls</button>
+        <button class="category-option" type="button" data-category="edibles" onclick="selectCategory('edibles')">Edibles</button>
+      </aside>
+      <main class="category-content" id="category-content" aria-live="polite"></main>
+    </div>
+  </div>
+
+  <aside class="cart-dock" id="cart-dock" aria-label="Shopping cart" hidden>
+    <div class="cart-dock-top"><strong>Cart <span id="cart-count">0</span> items</strong><span class="cart-dock-total" id="cart-dock-total">R 0.00</span></div>
+    <button class="cart-open" type="button" onclick="openCart()">Open cart</button>
+  </aside>
+
+  <dialog class="cart-dialog" id="cart-dialog" aria-labelledby="full-cart-title">
+    <div class="dialog-header">
+      <h2 id="full-cart-title">Full Cart</h2>
+      <button class="close-button" type="button" onclick="closeCart()">Close</button>
+    </div>
+    <ul class="cart-items" id="full-cart-items"></ul>
+    <p class="cart-total">Total: <span id="full-cart-total">R 0.00</span></p>
+  </dialog>
+
+  <script>
+    const cart = new Map();
+    const flowerCatalog = [
+      { name: 'Bubba Kush', price: 50, group: 'Hybrid', type: 'Indica-dominant hybrid', ratio: '80% Indica / 20% Sativa', thc: '14-25', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Calming, happy, relaxing, uplifting' },
+      { name: 'OG Kush', price: 60, group: 'Hybrid', type: 'Indica-dominant hybrid', ratio: '60% Indica / 40% Sativa', thc: '20-26', intensity: 'Medium', time: 'Nighttime', setting: 'Indoors', effects: 'Uplifting, happy, sociable, giggly, relaxing' },
+      { name: 'Mango Haze', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '60% Sativa / 40% Indica', thc: '17-23', intensity: 'Medium', time: 'Daytime', setting: 'Outdoors', effects: 'Euphoric, focused, happy, relaxing, uplifting' },
+      { name: 'Northern Lights', price: 70, group: 'Indica', type: 'Pure indica', ratio: '100% Indica', thc: '16-21', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Euphoric, happy, relaxing, sleepy' },
+      { name: 'Blue Dream', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '60% Sativa / 40% Indica', thc: '18-24', intensity: 'High', time: 'Daytime', setting: 'Outdoors', effects: 'Uplifting, creative, relaxed, focused' },
+      { name: 'Sour Diesel', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '70% Sativa / 30% Indica', thc: '18-26', intensity: 'High', time: 'Daytime', setting: 'Outdoors', effects: 'Energized, uplifted, talkative, focused' },
+      { name: 'Girl Scout Cookies', price: 50, group: 'Hybrid', type: 'Indica-dominant hybrid', ratio: '60% Indica / 40% Sativa', thc: '18-28', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Euphoric, relaxed, happy, hungry' },
+      { name: 'Granddaddy Purple', price: 50, group: 'Hybrid', type: 'Indica-dominant hybrid', ratio: '70% Indica / 30% Sativa', thc: '17-23', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Relaxed, sleepy, happy, calm' },
+      { name: 'White Widow', price: 50, group: 'Hybrid', type: 'Balanced hybrid', ratio: '50% Indica / 50% Sativa', thc: '18-25', intensity: 'High', time: 'Daytime', setting: 'Indoors', effects: 'Energetic, creative, happy, sociable' },
+      { name: 'Jack Herer', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '60% Sativa / 40% Indica', thc: '18-24', intensity: 'High', time: 'Daytime', setting: 'Outdoors', effects: 'Uplifted, creative, focused, happy' },
+      { name: 'Pineapple Express', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '60% Sativa / 40% Indica', thc: '16-26', intensity: 'High', time: 'Daytime', setting: 'Outdoors', effects: 'Happy, energetic, creative, uplifted' },
+      { name: 'Gelato', price: 50, group: 'Hybrid', type: 'Indica-dominant hybrid', ratio: '60% Indica / 40% Sativa', thc: '20-25', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Relaxed, euphoric, focused, happy' },
+      { name: 'Wedding Cake', price: 50, group: 'Hybrid', type: 'Indica-dominant hybrid', ratio: '60% Indica / 40% Sativa', thc: '20-25', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Relaxed, happy, euphoric, calm' },
+      { name: 'Zkittlez', price: 50, group: 'Hybrid', type: 'Indica-dominant hybrid', ratio: '60% Indica / 40% Sativa', thc: '15-23', intensity: 'Medium', time: 'Nighttime', setting: 'Indoors', effects: 'Relaxed, happy, calm, sleepy' },
+      { name: 'Gorilla Glue #4', price: 50, group: 'Hybrid', type: 'Balanced hybrid', ratio: '50% Indica / 50% Sativa', thc: '18-30', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Euphoric, relaxed, happy, heavy' },
+      { name: 'AK-47', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '65% Sativa / 35% Indica', thc: '17-23', intensity: 'High', time: 'Daytime', setting: 'Indoors', effects: 'Focused, uplifted, sociable, relaxed' },
+      { name: 'Durban Poison', price: 50, group: 'Sativa', type: 'Pure sativa', ratio: '100% Sativa', thc: '15-25', intensity: 'High', time: 'Daytime', setting: 'Outdoors', effects: 'Energetic, focused, creative, uplifted' },
+      { name: 'Green Crack', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '65% Sativa / 35% Indica', thc: '15-25', intensity: 'High', time: 'Daytime', setting: 'Outdoors', effects: 'Focused, energized, happy, creative' },
+      { name: 'Amnesia Haze', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '70% Sativa / 30% Indica', thc: '20-25', intensity: 'High', time: 'Daytime', setting: 'Outdoors', effects: 'Uplifting, euphoric, creative, happy' },
+      { name: 'Super Silver Haze', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '70% Sativa / 30% Indica', thc: '18-23', intensity: 'High', time: 'Daytime', setting: 'Outdoors', effects: 'Energetic, focused, happy, uplifted' },
+      { name: 'Strawberry Cough', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '70% Sativa / 30% Indica', thc: '15-26', intensity: 'High', time: 'Daytime', setting: 'Outdoors', effects: 'Uplifting, talkative, focused, happy' },
+      { name: 'Trainwreck', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '60% Sativa / 40% Indica', thc: '18-25', intensity: 'High', time: 'Daytime', setting: 'Outdoors', effects: 'Euphoric, energetic, creative, uplifted' },
+      { name: 'Purple Haze', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '70% Sativa / 30% Indica', thc: '16-20', intensity: 'Medium', time: 'Daytime', setting: 'Outdoors', effects: 'Energetic, uplifted, creative, happy' },
+      { name: 'Afghan Kush', price: 50, group: 'Indica', type: 'Pure indica', ratio: '100% Indica', thc: '17-20', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Relaxed, calm, sleepy, happy' },
+      { name: 'Hindu Kush', price: 50, group: 'Indica', type: 'Pure indica', ratio: '100% Indica', thc: '15-20', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Relaxed, calm, happy, sleepy' },
+      { name: 'Bruce Banner', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '60% Sativa / 40% Indica', thc: '20-29', intensity: 'High', time: 'Daytime', setting: 'Outdoors', effects: 'Euphoric, creative, uplifted, focused' },
+      { name: 'Runtz', price: 50, group: 'Hybrid', type: 'Balanced hybrid', ratio: '50% Indica / 50% Sativa', thc: '19-29', intensity: 'High', time: 'Anytime', setting: 'Indoors', effects: 'Happy, relaxed, euphoric, calm' },
+      { name: 'Do-Si-Dos', price: 50, group: 'Hybrid', type: 'Indica-dominant hybrid', ratio: '70% Indica / 30% Sativa', thc: '20-30', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Relaxed, sleepy, euphoric, calm' },
+      { name: 'Skywalker OG', price: 50, group: 'Hybrid', type: 'Indica-dominant hybrid', ratio: '85% Indica / 15% Sativa', thc: '20-26', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Relaxed, sleepy, happy, euphoric' },
+      { name: 'Banana Kush', price: 50, group: 'Hybrid', type: 'Indica-dominant hybrid', ratio: '60% Indica / 40% Sativa', thc: '17-25', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Relaxed, happy, euphoric, calm' },
+      { name: 'Maui Wowie', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '70% Sativa / 30% Indica', thc: '16-20', intensity: 'Medium', time: 'Daytime', setting: 'Outdoors', effects: 'Energetic, uplifted, creative, happy' },
+      { name: 'Lemon Haze', price: 50, group: 'Hybrid', type: 'Sativa-dominant hybrid', ratio: '70% Sativa / 30% Indica', thc: '17-25', intensity: 'High', time: 'Daytime', setting: 'Outdoors', effects: 'Happy, focused, energetic, uplifted' },
+      { name: 'Chemdawg', price: 50, group: 'Hybrid', type: 'Balanced hybrid', ratio: '50% Indica / 50% Sativa', thc: '17-25', intensity: 'High', time: 'Anytime', setting: 'Indoors', effects: 'Uplifting, focused, relaxed, happy' },
+      { name: 'Apple Fritter', price: 50, group: 'Hybrid', type: 'Balanced hybrid', ratio: '50% Indica / 50% Sativa', thc: '22-28', intensity: 'High', time: 'Nighttime', setting: 'Indoors', effects: 'Relaxed, euphoric, happy, uplifted' }
+    ];
+
+    function enterStore() {
+      document.getElementById('age-prompt').hidden = true;
+      document.getElementById('welcome-panel').hidden = false;
+    }
+
+    function viewProducts() {
+      document.getElementById('age-gate').hidden = true;
+      document.getElementById('store').hidden = false;
+    }
+
+    function denyEntry() {
+      document.getElementById('age-prompt').hidden = true;
+      document.getElementById('age-denied').hidden = false;
+    }
+
+    function addToCart(itemName, price) {
+      const item = cart.get(itemName) || { price, quantity: 0 };
+      item.quantity += 1;
+      cart.set(itemName, item);
+      renderCart();
+    }
+
+    function selectCategory(category) {
+      document.getElementById('category-landing').hidden = true;
+      document.getElementById('shop-layout').hidden = false;
+      document.getElementById('cart-dock').hidden = false;
+      for (const button of document.querySelectorAll('.category-option')) {
+        if (button.dataset.category === category) {
+          button.setAttribute('aria-current', 'page');
+        } else {
+          button.removeAttribute('aria-current');
+        }
+      }
+
+      const content = document.getElementById('category-content');
+      content.replaceChildren();
+      if (category !== 'flowers') {
+        const comingSoon = document.createElement('section');
+        comingSoon.className = 'coming-soon';
+        const heading = document.createElement('h3');
+        heading.textContent = category === 'pre-rolls' ? 'Pre-rolls' : 'Edibles';
+        const message = document.createElement('p');
+        message.textContent = 'Coming soon';
+        comingSoon.append(heading, message);
+        content.append(comingSoon);
+        return;
+      }
+
+      const heading = document.createElement('h2');
+      heading.id = 'products-heading';
+      heading.textContent = 'Flowers';
+      const description = document.createElement('p');
+      description.className = 'category-description';
+      description.textContent = `Check out the best flowers. Browse all ${flowerCatalog.length} strains.`;
+      const note = document.createElement('p');
+      note.className = 'catalog-note';
+      note.textContent = 'THC ranges, reported effects, and indica/sativa ratios are typical estimates; actual batches vary.';
+      const grid = document.createElement('div');
+      grid.className = 'product-grid';
+      grid.id = 'products';
+      for (const [index, flower] of flowerCatalog.entries()) {
+        grid.append(createProductCard(flower, index));
+      }
+      content.append(heading, description, note, grid);
+      document.getElementById('products-heading').scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+
+    function createProductCard(flower, index) {
+      const card = document.createElement('article');
+      card.className = 'product-card';
+      card.style.animationDelay = `${Math.min(index % 6, 5) * 35}ms`;
+
+      const artwork = document.createElement('div');
+      artwork.className = 'strain-art';
+      artwork.dataset.type = flower.group;
+      artwork.setAttribute('role', 'img');
+      artwork.setAttribute('aria-label', `${flower.name} flower artwork`);
+      artwork.textContent = flower.name.toUpperCase();
+
+      const name = document.createElement('h3');
+      name.textContent = flower.name;
+      const price = document.createElement('p');
+      price.className = 'product-price';
+      price.textContent = `R ${flower.price.toFixed(2)} / 1g`;
+      const type = document.createElement('p');
+      type.className = 'strain-label';
+      type.textContent = flower.ratio ? `${flower.type} - ${flower.ratio}` : flower.type;
+      const details = document.createElement('p');
+      details.className = 'product-description';
+      const intensityClass = `intensity-${flower.intensity.toLowerCase()}`;
+      details.innerHTML = `THC: ${flower.thc}%<br>INTENSITY: <span class="intensity ${intensityClass}">${flower.intensity.toUpperCase()}</span>`;
+      const useTime = document.createElement('p');
+      useTime.className = `use-time ${flower.time === 'Daytime' ? 'day-use' : 'night-use'}`;
+      useTime.textContent = `${flower.time === 'Daytime' ? '☀️' : '🌙'} ${flower.time.toUpperCase()} USE`;
+      const setting = document.createElement('p');
+      setting.className = 'product-description';
+      setting.textContent = `Suggested setting: ${flower.setting.toLowerCase()}.`;
+      const effects = document.createElement('div');
+      effects.className = 'effects';
+      const effectsTitle = document.createElement('strong');
+      effectsTitle.textContent = 'Effects';
+      const effectsText = document.createElement('p');
+      effectsText.textContent = flower.effects;
+      effects.append(effectsTitle, effectsText);
+
+      const button = document.createElement('button');
+      button.className = 'btn';
+      button.type = 'button';
+      button.textContent = 'Add to Cart';
+      button.addEventListener('click', () => addToCart(flower.name, flower.price));
+      card.append(artwork, name, price, type, details, useTime, setting, effects, button);
+      return card;
+    }
+
+    function changeQuantity(itemName, amount) {
+      const item = cart.get(itemName);
+      if (!item) return;
+
+      item.quantity += amount;
+      if (item.quantity <= 0) {
+        cart.delete(itemName);
+      }
+      renderCart();
+    }
+
+    function openCart() {
+      renderCart();
+      document.getElementById('cart-dialog').showModal();
+    }
+
+    function closeCart() {
+      document.getElementById('cart-dialog').close();
+    }
+
+    function renderCart() {
+      let total = 0;
+      for (const item of cart.values()) {
+        total += item.price * item.quantity;
+      }
+
+      const itemCount = [...cart.values()].reduce((count, item) => count + item.quantity, 0);
+      document.getElementById('cart-count').textContent = String(itemCount);
+      document.getElementById('cart-dock-total').textContent = `R ${total.toFixed(2)}`;
+      document.getElementById('full-cart-total').textContent = `R ${total.toFixed(2)}`;
+
+      const cartList = document.getElementById('full-cart-items');
+      cartList.replaceChildren();
+      if (cart.size === 0) {
+        const emptyItem = document.createElement('li');
+        emptyItem.className = 'empty-cart';
+        const message = document.createElement('span');
+        message.textContent = 'Your cart is empty.';
+        const returnButton = document.createElement('button');
+        returnButton.className = 'return-shop';
+        returnButton.type = 'button';
+        returnButton.textContent = 'GET BACK TO SHOPPING!';
+        returnButton.addEventListener('click', returnToShop);
+        emptyItem.append(message, returnButton);
+        cartList.append(emptyItem);
+        return;
+      }
+
+      for (const [itemName, item] of cart) {
+        const listItem = document.createElement('li');
+        listItem.className = 'cart-row';
+        const itemDetails = document.createElement('span');
+        itemDetails.textContent = `${itemName} (${item.quantity} x 1g) - R ${(item.price * item.quantity).toFixed(2)}`;
+        const controls = document.createElement('span');
+        controls.className = 'quantity-controls';
+        const minusButton = document.createElement('button');
+        minusButton.className = 'quantity-button';
+        minusButton.type = 'button';
+        minusButton.textContent = '-';
+        minusButton.setAttribute('aria-label', `Remove one ${itemName}`);
+        minusButton.addEventListener('click', () => changeQuantity(itemName, -1));
+        const quantity = document.createElement('span');
+        quantity.textContent = String(item.quantity);
+        const plusButton = document.createElement('button');
+        plusButton.className = 'quantity-button';
+        plusButton.type = 'button';
+        plusButton.textContent = '+';
+        plusButton.setAttribute('aria-label', `Add one ${itemName}`);
+        plusButton.addEventListener('click', () => changeQuantity(itemName, 1));
+        controls.append(minusButton, quantity, plusButton);
+        listItem.append(itemDetails, controls);
+        cartList.append(listItem);
+      }
+    }
+
+    function returnToShop() {
+      closeCart();
+      selectCategory('flowers');
+    }
+  </script>
+
+</body>
+</html>
